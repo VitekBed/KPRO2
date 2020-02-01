@@ -1,23 +1,49 @@
 package guimodel;
 
-import data.IDataCollector;
 import main.*;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import java.util.List;
+
 
 public class ZakazkaListModel<T> extends AbstractListModel<T> {
+    public boolean isUserMode() {
+        return userMode;
+    }
 
-    private final String zakazkaTableName = "zakazka";
+    public void setUserMode(boolean userMode) {
+        this.userMode = userMode;
+    }
+
+    private boolean userMode = false;
+
+    public ZakazkaListModel() {
+        setUserMode(false);
+    }
+    public ZakazkaListModel(boolean userMode) {
+        setUserMode(userMode);
+    }
+
     @Override
     public int getSize() {
-        return main.dataCollector.getTableRowCount(zakazkaTableName);
+        if (isUserMode())
+            return main.dataCollector.getListZakzaka(main.getUser()).size();
+        else
+            return main.dataCollector.getListZakzaka().size();
     }
 
     @Override
     public T getElementAt(int i) {
-        return main.dataCollector.<T>getElementAt(i,"nazev",zakazkaTableName);
+        if (isUserMode())
+        {
+            List<T> list = main.dataCollector.getListZakzaka(main.getUser());
+            return  list.get(i);
+        }
+        else {
+            List<T> list = main.dataCollector.getListZakzaka();
+            return list.get(i);
+        }
+
     }
 
 }
